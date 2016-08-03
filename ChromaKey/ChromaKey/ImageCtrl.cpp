@@ -13,6 +13,13 @@ int openWindow(const string windowName)
   return NO_ERROR;
 }
 
+int openTrackBar(const string windowName, int& val, const int max)
+{
+  openWindow(windowName);
+  cv::createTrackbar(windowName, windowName, &val, max);
+  return NO_ERROR;
+}
+
 int showNoWait(const std::string windowName, const cv::Mat& mat)
 {
   cv::imshow(windowName, mat);

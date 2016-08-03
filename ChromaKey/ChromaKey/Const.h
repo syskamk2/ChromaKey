@@ -22,9 +22,14 @@
 
 #define SAD_BINARYTHRESH (-1)
 
+#define CHANNEL_Cr (2)
+#define CHANNEL_Cb (1)
+#define CHANNEL_Y (0)
+
 const std::string DEFAULT_WINDOWNAME = "Default";
 const std::string CAPTURE_WINDOWNAME = "Capture";
 const std::string BACKGROUND_WINDOWNAME = "BackGround";
 const std::string CHROMAKEY_WINDOWNAME = "ChromaKey";
 const std::string DEBUG_WINDOWNAME = "Debug";
+const std::string TRACKBAR_NAME = "Trackbar";
 #endif

@@ -22,6 +22,7 @@ int main()
   err |= openWindow(CHROMAKEY_WINDOWNAME);
   err |= openWindow(CAPTURE_WINDOWNAME);
   err |= openWindow(BACKGROUND_WINDOWNAME);
+  err |= openWindow(DEBUG_WINDOWNAME);
   if (err != NO_ERROR)
   {
     return err;

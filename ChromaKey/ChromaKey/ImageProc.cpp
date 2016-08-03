@@ -30,23 +30,28 @@ int chromakeyProc(cv::VideoCapture& cap, const cv::Mat& bg, const cv::Mat& vbg)
   cv::Mat diff[DEFAULT_CHANNELS];
   cv::Mat chrom;
 
-  cv::cvtColor(bg, bgHSV, CV_BGR2HSV);
+  int binThresh = 2;
+  openTrackBar(TRACKBAR_NAME, binThresh);
+
+  cv::cvtColor(bg, bgHSV, CV_BGR2YCrCb);
   //背景画像のチャンネル分解
   for (int i = 0; i < DEFAULT_CHANNELS; ++i)
   {
     takeNthChannel(bgHSV, bgSplit[i], i);
   }
+  char c = '\0';
   //カメラからの入力をクロマキー合成
-  while ((ret = cameraCapture(cap, frame)) == NO_ERROR)
+  while ((ret = cameraCapture(cap, frame)) == NO_ERROR && c != 'c')
   {
     maskImg = cv::Mat::zeros(cv::Size(width, height), CV_8UC1);
-    cv::cvtColor(frame, frameHSV, CV_BGR2HSV);
-    for (int i = 0; i < DEFAULT_CHANNELS; ++i)
-    {
-      takeNthChannel(frameHSV, frameSplit, i);
-      makeDiffImg(frameSplit, bgSplit[i], diff[i]);
-      cv::bitwise_or(maskImg, diff[i], maskImg);
-    }
+    cv::cvtColor(frame, frameHSV, CV_BGR2YCrCb);
+    
+    int useChannel = CHANNEL_Y;
+    
+    takeNthChannel(frameHSV, frameSplit, useChannel);
+    makeDiffImg(frameSplit, bgSplit[useChannel], diff[useChannel], binThresh);
+    cv::bitwise_or(maskImg, diff[useChannel], maskImg);
+    
     for (int i = 0; i < DEFAULT_CHANNELS; ++i)
     {
       maskImgs[i] = maskImg;
@@ -67,9 +72,9 @@ int chromakeyProc(cv::VideoCapture& cap, const cv::Mat& bg, const cv::Mat& vbg)
     cv::bitwise_or(vbgMask, frameMask, chrom);
 
     //表示
-    showNoWait(CAPTURE_WINDOWNAME, frame);
-    showNoWait(DEBUG_WINDOWNAME, maskImg3ch);
-    showAndGetKey(CHROMAKEY_WINDOWNAME, chrom);
+    showNoWait(CAPTURE_WINDOWNAME, diff[useChannel]);//frame
+    showNoWait(DEBUG_WINDOWNAME, maskImg3ch);//maskImg3ch
+    c = showAndGetKey(CHROMAKEY_WINDOWNAME, chrom);//chrom
   }
 
   return ret;
